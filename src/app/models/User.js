@@ -1,11 +1,11 @@
-const mongoose = require('../database');
+const mongoose = require('../../database');
 const bcrypt = require('bcrypt');
 
 //Schema define os campos que teremos dentro do DB na tabela de usuarios
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
-        require: true,
+        required: true,
     },
     email: {
         type: String,

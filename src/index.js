@@ -8,9 +8,9 @@ const app = express();
 app.use(bodyParser.json());
 
 //Entende e decodifica parametros url passados a api
-app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 
-//repassa a classe 'app' pro authController (controle de autenticação)
-require('./controllers/authController')(app);
+
+require('./controllers/index')(app);
 
 app.listen(3000);

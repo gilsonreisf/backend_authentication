@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const authConfig = require('../config/auth');
+const authConfig = require('../../config/auth');
 
 const User = require('../models/User')
 
@@ -41,16 +41,17 @@ router.post('/register', async (req, res) => {
 router.post('/authenticate', async (req, res) => {
     const { email, password } = req.body;
 
+    //Verifica se a senha informada corresponde ao usuário
     const user = await User.findOne({ email }).select('+password');
 
     if(!user)
         return res.status(400).send({ error: 'Usuário não encontrado' });
-
+    
+    //compara se a senha usada no Login corresponde a senha cadastrada no banco de dados e retorna um erro caso a senha esteja errada
     if (!await bcrypt.compare(password, user.password))
         return res.status(400).send({ error: 'Senha Incorreta' });    
-        //compara se a senha usada no Login corresponde a senha cadastrada no banco de dados e retorna um erro caso a senha esteja errada
 
-    user.password = undefined;
+    user.password = undefined; 
 
     res.send({ 
         user, 
