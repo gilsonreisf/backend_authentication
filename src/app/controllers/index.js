@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// fs trabalha com o file system do node e o path trabalha com cainhos de pastas
+// fs trabalha com o file system do node e o path trabalha com caminhos de pastas
 
 //filtra arquivos que não começam com ponto (não são arquivos de configuração) e que não são index.js
 //O objetivo é simplificar a importação dos controllers no index.js principal, de modo que todos os controllers criados sejam automaticamente adicionados ao projeto
