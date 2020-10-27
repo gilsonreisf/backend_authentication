@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 mongoose.connect("mongodb://localhost/noderest", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useCreateIndex: true
+  useCreateIndex: true,
+  useFindAndModify: false
 });
 //indica a classe de Promise que o mongoose vai utilizar
 mongoose.Promise = global.Promise;
