@@ -9,7 +9,7 @@ const transport = nodemailer.createTransport({
     host,
     port,
     auth: { user,pass }
-  });
+});
 
 transport.use('compile', hbs({
     viewEngine: 'handlebars',
