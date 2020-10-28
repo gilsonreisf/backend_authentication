@@ -2,10 +2,12 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const mailer = require('../../modules/mailer');
 
 const authConfig = require('../../config/auth');
 
-const User = require('../models/User')
+const User = require('../models/User');
+const { getMaxListeners } = require('../../modules/mailer');
 
 const router = express.Router();
 
@@ -59,7 +61,7 @@ router.post('/authenticate', async (req, res) => {
         token: generateToken({ id: user.id }),
     })
 });
-
+//Rota pararecuperação de senha
 router.post('/forgot_password', async(req, res) => {
     const { email } = req.body;
 
@@ -82,11 +84,46 @@ router.post('/forgot_password', async(req, res) => {
            } 
         });
 
-        console.log(token, now);
+        mailer.sendMail({
+            to: email,
+            from: 'gilson1789@live.com',
+            template: 'auth/forgot_password',
+            context: { token },
+        }, (err) => {
+            if(err)
+            return res.status(400).send({ error: 'Não foi possível enviar o email de recuperação de senha'});
+
+            return res.send();
+        })
 
     } catch (err) {
         res.status(400).send({ error: 'Erro, tente novamente' });
     }
 })
+//Rota para escolher uma nova senha
+router.post('/reset_password', async (req, res) =>{
+    const { email, token, password } = req.body;
 
+    try {
+        const user = await User.findOne({ email })
+            .select('+passwordResetToken passwordResetExpires');
+
+        if(!user)
+            return res.status(400).send({ error: 'Usuário não encontrado '});
+        
+        const now = new Date();
+
+        if(now > user.passwordResetExpires)
+            return res.status(400).send({ error: 'Token expirado, gere um novo Token'});
+
+        user.password = password;
+
+        await user.save();
+
+        res.send();
+
+    } catch(err) {
+        res.status(400).send({ error: 'Não foi possível resetar a senha, tente novamente' });
+    }
+});
 module.exports = app => app.use('/auth', router);
